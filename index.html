@@ -250,6 +250,11 @@
   .chips input:focus-visible + label{outline:3px solid var(--sun);outline-offset:2px}
   form .btn{width:100%;justify-content:center;margin-top:6px}
   .form-note{font-size:14px;color:var(--muted);margin-top:12px;text-align:center}
+  .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+  .health-note{font-size:14px;color:var(--muted);background:#f4f8f6;border-radius:12px;padding:10px 14px;margin:4px 0 14px}
+  .consent{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15px;margin-bottom:14px;cursor:pointer}
+  .consent input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--teal)}
+  .legal-links{display:flex;gap:16px;flex-wrap:wrap}
   .form-msg{display:none;margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--mint);font-weight:700;color:var(--teal-dark)}
 
   /* Footer */
@@ -741,6 +746,9 @@
         <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required></div>
         <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
       </div>
+      <div class="field"><label for="email">Email <span style="font-weight:600;color:var(--muted)">(optional)</span></label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+      <div class="hp" aria-hidden="true"><label for="website_url">Leave this empty</label><input id="website_url" name="website_url" tabindex="-1" autocomplete="off"></div>
+      <input type="hidden" name="started_at" id="started_at">
       <div class="row">
         <div class="field"><label for="town">Town</label>
           <select id="town" name="town">
@@ -754,11 +762,13 @@
         </div>
       </div>
       <div class="field"><label for="msg">How can we help?</label><textarea id="msg" name="msg" placeholder="Tell us a little about your loved one and what kind of help you're looking for."></textarea></div>
-      <button class="btn btn-primary" type="submit">Send Message
+      <p class="health-note">Please don't include medical records, diagnoses, insurance or Medicaid numbers, or other sensitive health details. We'll talk about those by phone.</p>
+      <label class="consent"><input type="checkbox" id="consent" name="consent" value="yes"> <span>I agree to be contacted about my request and I've read the <a href="privacy.html">Privacy Policy</a>.</span></label>
+      <button class="btn btn-primary" type="submit" id="sendBtn">Send Message
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
       <div class="form-msg" id="formMsg" role="status"></div>
-      <p class="form-note">Prefer to talk? Call or text <a href="tel:+19203018093">(920) 301-8093</a> any time.</p>
+      <p class="form-note">Prefer to talk? Call or text <a href="tel:+19203018093">(920) 301-8093</a> any time.<br><strong>This form is not for emergencies.</strong> In an emergency, call 911.</p>
     </form>
   </div>
 </section>
@@ -794,7 +804,7 @@
     </div>
     <div class="copy">
       <span>© 2016–<span id="yr">2026</span> by Aaron Bowers, EMT · Green Bay Autism Respite Care</span>
-      <span>All rights reserved.</span>
+      <span class="legal-links"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><span>All rights reserved.</span></span>
     </div>
   </div>
 </footer>
@@ -830,25 +840,40 @@
   }, {threshold: .12}) : null;
   document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
 
-  // Contact form: opens a pre-filled text message to the business phone.
-  // (Can be swapped for a Google Apps Script endpoint later so messages arrive by email.)
-  document.getElementById('contactForm').addEventListener('submit', e => {
+  // Contact form: sends the message to the owner's email through Google Apps Script.
+  // Paste the Apps Script web app link between the quotes below.
+  const FORM_ENDPOINT = '';
+  const form = document.getElementById('contactForm');
+  document.getElementById('started_at').value = Date.now();
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    const f = e.target, msgBox = document.getElementById('formMsg');
-    const name = f.name.value.trim(), phone = f.phone.value.trim();
-    if (!name || !phone) {
-      msgBox.style.display = 'block';
-      msgBox.style.background = '#f9ddd4';
-      msgBox.textContent = 'Please add your name and phone number so we can reach you.';
-      (name ? f.phone : f.name).focus();
+    const el = n => form.elements.namedItem(n);
+    const msgBox = document.getElementById('formMsg'), btn = document.getElementById('sendBtn');
+    const name = el('name').value.trim(), phone = el('phone').value.trim();
+    const show = (text, bad) => { msgBox.style.display = 'block'; msgBox.style.background = bad ? '#f9ddd4' : ''; msgBox.textContent = text; };
+    if (!name || !phone) { show('Please add your name and phone number so we can reach you.', true); (name ? el('phone') : el('name')).focus(); return; }
+    if ((phone.match(/\d/g) || []).length < 7) { show('Please check your phone number.', true); el('phone').focus(); return; }
+    if (!el('consent').checked) { show('Please check the box to agree to be contacted.', true); el('consent').focus(); return; }
+
+    if (!FORM_ENDPOINT) {
+      const body = `Hi! This is ${name} (${el('who').value}) from ${el('town').value}. Phone: ${phone}. Care needed for: ${el('age').value}. ${el('msg').value.trim()}`;
+      show('Thank you! Opening your messages app so you can send this to us now.');
+      track('form_submit');
+      window.location.href = 'sms:+19203018093?&body=' + encodeURIComponent(body);
       return;
     }
-    const body = `Hi! This is ${name} (${f.who.value}) from ${f.town.value}. Phone: ${phone}. Care needed for: ${f.age.value}. ${f.msg.value.trim()}`;
-    msgBox.style.display = 'block';
-    msgBox.style.background = '';
-    msgBox.textContent = 'Thank you! Opening your messages app so you can send this to us now.';
-    track('form_submit');
-    window.location.href = 'sms:+19203018093?&body=' + encodeURIComponent(body);
+
+    btn.disabled = true; btn.style.opacity = .7; show('Sending…');
+    try {
+      await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(form)) });
+      track('form_submit');
+      form.reset(); document.getElementById('started_at').value = Date.now();
+      show('Thank you! Your message was sent. We\'ll get back to you soon. If it\'s urgent, call or text (920) 301-8093.');
+    } catch (err) {
+      show('Sorry, the message didn\'t go through. Please call or text (920) 301-8093.', true);
+    } finally {
+      btn.disabled = false; btn.style.opacity = 1;
+    }
   });
 </script>
 </body>
