@@ -252,6 +252,7 @@
   .form-note{font-size:14px;color:var(--muted);margin-top:12px;text-align:center}
   .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
   .health-note{font-size:14px;color:var(--muted);background:#f4f8f6;border-radius:12px;padding:10px 14px;margin:4px 0 14px}
+  .hint{display:block;font-size:13px;color:var(--muted);margin-top:5px;font-weight:600}
   .consent{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15px;margin-bottom:14px;cursor:pointer}
   .consent input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--teal)}
   .legal-links{display:flex;gap:16px;flex-wrap:wrap}
@@ -730,42 +731,40 @@
       <div class="info-row"><svg viewBox="0 0 24 24" fill="#5e8b7e" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v9h4v-9h3l.5-4h-3.5V9c0-.6.4-1 1-1z"/></svg><a href="https://m.facebook.com/100088886964982/" target="_blank" rel="noopener">Follow us on Facebook</a></div>
     </div>
 
-    <form class="card reveal" id="contactForm" action="https://formsubmit.co/AIRRUNBOWERS@yahoo.com" method="POST" novalidate>
-      <input type="hidden" name="_subject" value="New message from greenbayautism.com">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_next" value="https://www.greenbayautism.com/thanks.html">
-      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <form class="card reveal" id="contactForm" novalidate>
+      <input type="text" name="website_url" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="started_at" id="started_at">
       <h3>Send us a message</h3>
       <p class="sub">We'll get back to you as soon as possible.</p>
       <div class="field">
         <span style="display:block;font-weight:800;font-size:15px;margin-bottom:8px">I am a…</span>
         <div class="chips" role="radiogroup" aria-label="I am a">
-          <input type="radio" name="I am a" id="w1" value="Parent / Guardian" checked><label for="w1">Parent / Guardian</label>
-          <input type="radio" name="I am a" id="w2" value="Caseworker"><label for="w2">Caseworker</label>
-          <input type="radio" name="I am a" id="w3" value="Agency"><label for="w3">Agency</label>
-          <input type="radio" name="I am a" id="w4" value="Caregiver applicant"><label for="w4">Want to be a caregiver</label>
+          <input type="radio" name="who" id="w1" value="Parent / Guardian" checked><label for="w1">Parent / Guardian</label>
+          <input type="radio" name="who" id="w2" value="Caseworker"><label for="w2">Caseworker</label>
+          <input type="radio" name="who" id="w3" value="Agency"><label for="w3">Agency</label>
+          <input type="radio" name="who" id="w4" value="Caregiver applicant"><label for="w4">Want to be a caregiver</label>
         </div>
       </div>
       <div class="row">
-        <div class="field"><label for="name">Your name</label><input id="name" name="Name" autocomplete="name" required></div>
-        <div class="field"><label for="phone">Phone</label><input id="phone" name="Phone" type="tel" autocomplete="tel" required></div>
+        <div class="field"><label for="first_name">First name only</label><input id="first_name" name="first_name" autocomplete="given-name" maxlength="30" placeholder="Jamie" required>
+          <small class="hint">Please don't include your last name.</small></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="name@example.com" required></div>
       </div>
-      <div class="field"><label for="email">Email <span style="font-weight:600;color:var(--muted)">(optional)</span></label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
       <div class="row">
         <div class="field"><label for="town">Town</label>
-          <select id="town" name="Town">
+          <select id="town" name="town">
             <option>Green Bay</option><option>Appleton</option><option>Menasha</option><option>Oshkosh</option><option>Neenah</option><option>Shawano</option><option>Oconto</option><option>Chilton</option><option>Waupaca</option><option>Marinette</option><option>Kewaunee</option><option>Manitowoc</option><option>Two Rivers</option><option>Sturgeon Bay</option><option>Clintonville</option><option>De Pere</option><option>Ashwaubenon</option><option>Howard</option><option>Suamico</option><option>Kaukauna</option><option>Kimberly</option><option>Little Chute</option><option>Other</option>
           </select>
         </div>
         <div class="field"><label for="age">Care needed for</label>
-          <select id="age" name="Care needed for">
+          <select id="age" name="care">
             <option>Child (12–17)</option><option>Young adult (18–28)</option><option>Personal care / daily living skills</option><option>Not sure yet</option>
           </select>
         </div>
       </div>
-      <div class="field"><label for="msg">How can we help?</label><textarea id="msg" name="Message" placeholder="Tell us a little about your loved one and what kind of help you're looking for."></textarea></div>
+      <div class="field"><label for="msg">How can we help?</label><textarea id="msg" name="message" maxlength="1500" placeholder="Tell us a little about your loved one and what kind of help you're looking for."></textarea></div>
       <p class="health-note">Please don't include medical records, diagnoses, insurance or Medicaid numbers, or other sensitive health details. We'll talk about those by phone.</p>
-      <label class="consent"><input type="checkbox" id="consent" name="Agreed to be contacted" value="Yes"> <span>I agree to be contacted about my request and I've read the <a href="privacy.html">Privacy Policy</a>.</span></label>
+      <label class="consent"><input type="checkbox" id="consent" name="consent" value="yes"> <span>I agree to be contacted by email about my request and I've read the <a href="privacy.html">Privacy Policy</a>.</span></label>
       <button class="btn btn-primary" type="submit" id="sendBtn">Send Message
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -842,19 +841,40 @@
   }, {threshold: .12}) : null;
   document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
 
-  // Contact form: checks the form, then sends it to the owner's email through FormSubmit.
+  // Contact form: sends first name + email (never a last name) to Google Apps Script,
+  // which emails the owner and logs it in the Website Messages sheet.
+  // Paste the Apps Script web app link between the quotes below.
+  const FORM_ENDPOINT = '';
   const form = document.getElementById('contactForm');
-  form.addEventListener('submit', e => {
-    const msgBox = document.getElementById('formMsg');
-    const name = document.getElementById('name').value.trim(), phone = document.getElementById('phone').value.trim();
-    const show = text => { msgBox.style.display = 'block'; msgBox.style.background = '#f9ddd4'; msgBox.textContent = text; };
-    let problem = '', focusEl = null;
-    if (!name) { problem = 'Please add your name.'; focusEl = document.getElementById('name'); }
-    else if ((phone.match(/\d/g) || []).length < 7) { problem = 'Please add a phone number we can reach you at.'; focusEl = document.getElementById('phone'); }
-    else if (!document.getElementById('consent').checked) { problem = 'Please check the box to agree to be contacted.'; focusEl = document.getElementById('consent'); }
-    if (problem) { e.preventDefault(); show(problem); focusEl.focus(); return; }
-    track('form_submit');
-    const btn = document.getElementById('sendBtn'); btn.style.opacity = .7; btn.firstChild.textContent = 'Sending… ';
+  const firstEl = document.getElementById('first_name');
+  document.getElementById('started_at').value = Date.now();
+  // Warn right away if a space (a last name) is typed
+  const hintEl = firstEl.parentElement.querySelector('.hint');
+  firstEl.addEventListener('input', () => {
+    const two = /\S\s+\S/.test(firstEl.value);
+    hintEl.style.color = two ? 'var(--coral)' : '';
+    hintEl.textContent = two ? 'Please remove your last name. First name only.' : "Please don't include your last name.";
+  });
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const msgBox = document.getElementById('formMsg'), btn = document.getElementById('sendBtn');
+    const show = (text, bad) => { msgBox.style.display = 'block'; msgBox.style.background = bad ? '#f9ddd4' : ''; msgBox.textContent = text; };
+    const first = firstEl.value.trim(), email = document.getElementById('email').value.trim();
+    if (!first) { show('Please add your first name.', true); firstEl.focus(); return; }
+    if (/\s/.test(first)) { show('Please enter your first name only, with no last name.', true); firstEl.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { show('Please add an email address we can reply to.', true); document.getElementById('email').focus(); return; }
+    if (!document.getElementById('consent').checked) { show('Please check the box to agree to be contacted.', true); document.getElementById('consent').focus(); return; }
+    if (!FORM_ENDPOINT) { show('Our message form is almost ready. For now, please call or text (920) 301-8093.', true); return; }
+
+    btn.disabled = true; btn.style.opacity = .7; show('Sending…');
+    try {
+      await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(form)) });
+      track('form_submit');
+      window.location.href = 'thanks.html';
+    } catch (err) {
+      show('Sorry, the message didn\'t go through. Please call or text (920) 301-8093.', true);
+      btn.disabled = false; btn.style.opacity = 1;
+    }
   });
 </script>
 </body>
